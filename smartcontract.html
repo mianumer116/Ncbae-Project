@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.23;
+contract NCBAE{
+    address public owner;
+    struct student{
+        string name;
+        string class;
+        uint id;
+        uint fees;
+        uint totalpaid;
+    }
+    constructor(address _owner) {
+        owner=_owner;
+    }
+    modifier onlyowner{
+        require(msg.sender==owner,"onlyowner can call this");
+        _;
+    }
+    event enrolls(address,uint,uint);
+    event paidfees(address,uint,uint);
+    mapping(address=>uint256)public balance;
+    mapping(uint=>student)public students;
+    //ALL FUNCTION ARE DESCRIBES HERE
+    receive()external payable{
+        require(msg.value>0,"msg.value should be biger then zero");
+        balance[msg.sender]+=msg.value;
+    }
+    function enroll(string memory name,string memory class,uint id,uint fees)public onlyowner {
+        require(students[id].id!=id,"id alredy found");
+        students[id]=student(name,class,id,fees,0);
+        emit enrolls(msg.sender,students[id].id,block.timestamp);
+    }
+    function feespaid(uint id)public {
+        require(balance[msg.sender]>=students[id].id,"balance is not enough to paid fees");
+        require(students[id].id==id,"id not found");
+        balance[msg.sender]-=students[id].fees;
+        balance[owner]+=students[id].fees;
+        students[id].totalpaid+=students[id].fees;
+        emit paidfees(msg.sender,id,block.timestamp);
+
+    }
+//0x4A45241711FE562E1a747c52f09a0669593B34c9
+}
