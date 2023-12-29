@@ -387,7 +387,7 @@ color:white;
                   try {
                       let result = await contract.methods.students(id).call();
                       console.log(result);
-                      if (result && result.name && result.class && result.id && result.fees && result.totalpaid) {
+                      if (result && result.name && result.class && result.id && result.fees ) {
             // Convert totalpaid from wei to ethers
             let totalPaidInEth = web3.utils.fromWei(result.totalpaid, 'ether');
 
